@@ -62,11 +62,11 @@ const App = ({navigation}) => {
           <Stack.Screen
             name="onboard"
             component={
-              ParticularPatientScreen
+              Onboard
             }
             options={{headerShown: false}}
           />
-          {/* <Stack.Screen
+          <Stack.Screen
             name="signup"
             component={SignUp}
             options={{headerShown: false}}
@@ -102,7 +102,7 @@ const App = ({navigation}) => {
               tabBarLabel: 'Profile',
               tabBarIcon: ({ color }) => <Entypo name="user-circle-o" color={color} size={25} />,
             })}
-          /> */}
+          />
            <Stack.Screen
             name="ParticularPatientScreen"
             component={ParticularPatientScreen}
