@@ -9,7 +9,7 @@ import {
   } from 'react-native';
   import React, {useEffect, useState} from 'react';
   import Header from '../components/layout/Header';
-  import {getDoctors} from '../api/auth';
+  import {getDoctors} from '../api/doctor';
   import SearchBar from '../components/common/SearchBar';
   import { Fonts } from '../components/style';
   import BookIcon from 'react-native-vector-icons/FontAwesome6'
@@ -17,17 +17,17 @@ import {
     const [doctors, setDoctors] = useState([]);
     const {category} = route.params
   console.log('category',category)
-    // useEffect(() => {
-    //   const fetchCategories = async () => {
-    //     try {
-    //       const response = await getDoctors();
-    //       setDoctors(response.data.data);
-    //     } catch (error) {
-    //       console.error('Error fetching categories:', error);
-    //     }
-    //   };
-    //   fetchCategories();
-    // }, []);
+    useEffect(() => {
+      const fetchCategories = async () => {
+        try {
+          const response = await getDoctors(category._id);
+          setDoctors(response.data.docDetails);
+        } catch (error) {
+          console.error('Error fetching categories:', error);
+        }
+      };
+      fetchCategories();
+    }, []);
   
     return (
       <SafeAreaView style={{backgroundColor:'#e3eeeb',flex:1}}>
@@ -45,12 +45,12 @@ import {
                   </View>
                   <View style={styles.childTwo}>
                     <View style={styles.childTwoOne}>
-                      <Text style={styles.headingText}>{item.name}</Text>
+                      <Text style={styles.headingText}>{item?.email.split('@')?.[0] || item?.username}</Text>
                       <Text style={styles.badge}>Online</Text>
                      </View>
                     <View style={styles.childTwoTwo}>
-                      <Text style={styles.light}>{item.education}</Text>
-                      <Text style={styles.light}>{item.experience}</Text>
+                      <Text style={styles.light}>{item.education || "MD MBBS"}</Text>
+                      <Text style={styles.light}>{item.experience || "10 year Experience"}</Text>
                     </View>
                     <View style={styles.childThree}>
                       <TouchableOpacity style={styles.childThreeThree} onPress={()=>navigation.navigate('ParticularDoctorScreen',{item})}>

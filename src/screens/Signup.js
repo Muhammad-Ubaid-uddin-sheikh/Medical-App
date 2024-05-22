@@ -64,7 +64,7 @@ const SignUp = () => {
         // Redirect to respective dashboard based on selected role
         if (formData.role === 'patient') {
           navigation.navigate('dashboard');
-        } else if (formData.role === 'doctor') {
+        } else  {
           navigation.navigate('Doctordashboard');
         }
       })

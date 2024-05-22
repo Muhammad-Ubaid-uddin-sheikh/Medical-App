@@ -1,16 +1,23 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View, TextInput } from 'react-native'
 import { Fonts } from '../components/style'
 import Icon from 'react-native-vector-icons/FontAwesome6'
 import Button from '../components/common/Button'
 import DocumentPicker from 'react-native-document-picker';
 import { BASE_URL, uploadFile } from '../api/apihandler'
+import { updateAppoinment } from '../api/doctor'
+const ParticularPatientScreen = ({ route, navigation }) => {
 
+    const {item} = route.params
 
+    const appointmentId = item._id 
 
+    console.log("+++++++++++++++++++++++++++++++++++")
+    console.log("PATIENT PERTICULAR SCREEN", item)
+    console.log("PATIENT PERTICULAR SCREEN", item['patientId']?.email.split('@')?.[0] || item['patientId']?.username)
+    console.log("+++++++++++++++++++++++++++++++++++")
 
-
-const ParticularPatientScreen = () => {
+    const [isLoading, setIsLoading] = useState(false)
 
     const [prescriptionFile, setPrescriptionFile] = useState(null)
     const [reportsFile, setReportsFile] = useState(null)
@@ -27,30 +34,40 @@ const ParticularPatientScreen = () => {
             const doc = await DocumentPicker.pick({
                 type: [DocumentPicker.types.allFiles],
             });
-
             const formData = new FormData()
-            
+
             const selectedFile = doc?.[0]
-            console.log('Doc', doc)
-            console.log('Selected File', selectedFile)
             const file = { // Edit Here
-                uri : selectedFile.uri ,// Edit Here,
-                name : 'file', // Edit Here, Image Name with Extension very important
-                type : selectedFile.type // Edit Here
+                uri: selectedFile.uri,// Edit Here,
+                name: 'file', // Edit Here, Image Name with Extension very important
+                type: selectedFile.type // Edit Here
             }
-            formData.append('Media',file)
-           const responce = await uploadFile(formData)
-           console.log("RESPONSE", responce.data?.url)
+            formData.append('Media', file)
+            const responce = await uploadFile(formData)
+            console.log("RESPONSE", responce.data?.url)
 
 
             if (type === 'prescription') {
-                setPrescriptionFile([...prescriptionFile,BASE_URL+responce?.data?.url])
+                if (!!prescriptionFile) {
+
+                    setPrescriptionFile([...prescriptionFile, BASE_URL + responce?.data?.url])
+                } else {
+                    setPrescriptionFile([BASE_URL + responce?.data?.url])
+                }
             }
             if (type === 'report') {
-                setReportsFile([...reportsFile,BASE_URL+responce?.data?.url])
+                if (!!reportsFile) {
+                    setReportsFile([...reportsFile, BASE_URL + responce?.data?.url])
+                } else {
+                    setReportsFile([BASE_URL + responce?.data?.url])
+                }
             }
             if (type === 'notes') {
-                setNotesFile([...notesFile,BASE_URL+responce?.data?.url])
+                if (!!notesFile) {
+                    setNotesFile([...notesFile, BASE_URL + responce?.data?.url])
+                } else {
+                    setNotesFile([BASE_URL + responce?.data?.url])
+                }
             }
 
         } catch (err) {
@@ -62,6 +79,41 @@ const ParticularPatientScreen = () => {
         }
     }
 
+    const handleUpdateAppointment = async () => {
+        setIsLoading(true)
+        let body = {
+            appointmentId,
+            prescription: prescriptionText,
+            doctorNotes: NotesText,
+            doctorReport: reportsText,
+            prescriptionMedia: prescriptionFile,
+            doctorNotesMedia: notesFile,
+            doctorReportsMedia: reportsFile
+        }
+        try {
+            const response = await updateAppoinment(body)
+            console.log("RESPONSE", response)
+            setIsLoading(false)
+            navigation.navigate('NurseList',{item:body})
+            
+        } catch (error) {
+            setIsLoading(false)
+            console.log('Error in Update Appointment =>', error.response)
+        }
+
+        
+    }
+
+    useEffect(()=>{
+        if(item){
+            setNotesFile(item.doctorNotesMedia)
+            setNotesText(item.doctorNotes)
+            setReportsFile(item.doctorReportsMedia)
+            setReportText(item.doctorReport)
+            setPrescriptionFile(item.prescriptionMedia)
+            setPrescriptionText(item.prescription)
+        }
+    },[item]) 
     return (
         <View style={{ backgroundColor: '#e3eeeb', flex: 1, }}>
 
@@ -73,7 +125,7 @@ const ParticularPatientScreen = () => {
                 </View>
                 <View style={styles.childTwo}>
                     <View style={styles.childTwoOne}>
-                        <Text style={styles.headingText}>name</Text>
+                        <Text style={styles.headingText}>{item['patientId']?.email.split('@')?.[0] || item['patientId']?.username}</Text>
                         <Text style={styles.badge}>pending</Text>
                     </View>
                     <View style={styles.childTwoTwo}>
@@ -99,7 +151,7 @@ const ParticularPatientScreen = () => {
             <View style={{ backgroundColor: 'white', flex: 1, paddingTop: 10, justifyContent: 'space-around' }}>
 
                 <View style={{ paddingHorizontal: 15, }}>
-                    <Button text="Assu" Link={() => navigation.navigate('ConfromBooking')} />
+                    <Button text="Assign Nurse" Link={() => handleUpdateAppointment()} disabled={isLoading} />
                 </View>
 
             </View>

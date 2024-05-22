@@ -22,6 +22,7 @@ import Notification from './src/screens/Notification.js';
 import DoctorDashboard from './src/screens/doctorscreen/DoctorDashboard.js';
 import PatientList from './src/screens/PatientList.js';
 import ParticularPatientScreen from './src/screens/ParticularPatientScreen.js';
+import NurseList from './src/screens/NurseList.js';
 const Stack = createNativeStackNavigator();
 const App = ({navigation}) => {
   // const navigation = useNavigation()
@@ -61,9 +62,7 @@ const App = ({navigation}) => {
             <Stack.Screen options={{ headerShown: false }} name="SplashScreen" component={SplashScreen} />
           <Stack.Screen
             name="onboard"
-            component={
-              Onboard
-            }
+            component={Onboard}
             options={{headerShown: false}}
           />
           <Stack.Screen
@@ -194,6 +193,28 @@ const App = ({navigation}) => {
           <Stack.Screen
             name="PatientList"
             component={PatientList}
+            options={({ navigation }) => ({
+              headerLeft: () => (
+                <TouchableOpacity style={{flexDirection:"row",marginLeft: 0,}} onPress={() => navigation.goBack()}>
+                   <BackIcon name="arrowleft" size={23} color='#116754' style={{ marginRight: 18 }} />
+                  <Text style={[styles.backicontext,{marginLeft: -10}]}>Back</Text>
+                </TouchableOpacity>
+              ),
+              title: null, 
+              headerRight: () => (
+                <View style={{ flexDirection: 'row', gap: -5 ,}}>
+                  <TouchableOpacity style={{backgroundColor:'#116754',padding:10,borderRadius:50}} onPress={()=>navigation.navigate('Notification')} >
+               <NotificationIcon name='notifications' size={15} color={'white'} />
+              </TouchableOpacity>
+                </View>
+              ),
+             
+              tabBarIcon: ({ color }) => <Entypo name="user-circle-o" color={color} size={25} />,
+            })}
+          />
+          <Stack.Screen
+            name="NurseList"
+            component={NurseList}
             options={({ navigation }) => ({
               headerLeft: () => (
                 <TouchableOpacity style={{flexDirection:"row",marginLeft: 0,}} onPress={() => navigation.goBack()}>

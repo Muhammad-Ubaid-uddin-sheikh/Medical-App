@@ -317,7 +317,7 @@ const SignIn = () => {
     login(formData)
       .then(async res => {
         const response = res.data;
-        const user = response[formData.role];
+        const user = response.user
         const token = response.accessToken;
         await AsyncStorage.setItem('accessToken', token);
         await AsyncStorage.setItem('user', JSON.stringify(user));
@@ -327,15 +327,13 @@ const SignIn = () => {
 
         if (formData.role === 'patient') {
           navigation.navigate('dashboard');
-        } else if (formData.role === 'doctor') {
+        } else  {
           navigation.navigate('Doctordashboard');
-        } else if (formData.role === 'nurse') {
-          navigation.navigate('ParticularPatientScreen');
-        }
+        } 
       })
       .catch(error => {
-        setIsLoading(false);
-        Alert.alert('Login failed', error.message);
+        setIsLoading(false)
+        Alert.alert(error.message)
       });
   };
 

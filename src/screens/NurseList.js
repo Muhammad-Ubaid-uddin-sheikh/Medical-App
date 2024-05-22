@@ -14,20 +14,38 @@ import Footer from '../components/layout/Footer';
 import {getDoctors} from '../api/auth';
 import SearchBar from '../components/common/SearchBar';
 import { Fonts } from '../components/style';
-import BookIcon from 'react-native-vector-icons/FontAwesome6'
-const DoctorsList = ({navigation}) => {
-  const [doctors, setDoctors] = useState([]);
+import { assignNurse, getNurse } from '../api/doctor';
+const NurseList = ({route,navigation}) => {
+  const [user, setUser] = useState([]);
+  const {item} = route.params
+  console.log("NUSRESSSS PARAMSS   ", item.appointmentId)
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchNurse = async () => {
       try {
-        const response = await getDoctors();
-        setDoctors(response.data.data);
+        const response = await getNurse();
+        setUser(response.data);
       } catch (error) {
         console.error('Error fetching categories:', error);
       }
     };
-    fetchCategories();
+    fetchNurse();
   }, []);
+
+  const handleAssignNurse = async (id) => {
+    let body = {
+      appointmentId: item.appointmentId,
+      nurseId: id,
+    }
+    try {
+      const response =await assignNurse(body)
+      console.log("asdasdadsadsada", response.data)
+      navigation.navigate('Doctordashboard')
+    } catch (error) {
+      
+    }
+
+
+  }
 
   return (
     <SafeAreaView style={{backgroundColor:'#e3eeeb',flex:1}}>
@@ -40,7 +58,7 @@ const DoctorsList = ({navigation}) => {
       </View>
         <View style={{paddingHorizontal:5}}>
           <ScrollView style={styles.scroll}>
-            {doctors.map((item, index) => (
+            {user.map((item, index) => (
               <View style={styles.container} key={index}>
                 <View style={styles.childOne}>
                   {/* <Image style={{width:'100%',height:70,objectFit:'cover'}} source={{ uri: item.profileImage }} /> */}
@@ -48,25 +66,18 @@ const DoctorsList = ({navigation}) => {
                 </View>
                 <View style={styles.childTwo}>
                   <View style={styles.childTwoOne}>
-                    <Text style={styles.headingText}>{item.name}</Text>
+                    <Text style={styles.headingText}>{item?.email.split('@')?.[0] || item?.username}</Text>
                     <Text style={styles.badge}>Online</Text>
                    </View>
                   <View style={styles.childTwoTwo}>
-                    <Text style={styles.light}>{item.education}</Text>
-                    <Text style={styles.light}>{item.experience}</Text>
+                    <Text style={styles.light}>Patient #{item.education}</Text>
+                    <Text style={styles.light}>Disease Category</Text>
                   </View>
                   <View style={styles.childThree}>
-                    <TouchableOpacity style={styles.childThreeThree} onPress={()=>navigation.navigate('ParticularDoctorScreen',{item})}>
-                      {/* <Image source={require('../images/homeOne.png')} /> */}
-                      <BookIcon name='book-medical' size={13} color={'white'}/>
+                    <TouchableOpacity style={styles.childThreeThree} onPress={()=>handleAssignNurse(item._id)}>
+                      
                       <Text style={styles.childThreeThreeText}>
-                        Book Appointment
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.childThreeThree}>
-                      <Image source={require('../images/homeOne.png')} />
-                      <Text style={styles.childThreeThreeText}>
-                        Consult Online
+                         Assign 
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -154,8 +165,6 @@ const styles = StyleSheet.create({
   },
   childThree: {
     display: 'flex',
-    flexDirection: 'row',
-    // paddingLeft:10
   },
   childThreeThree: {
     flexDirection: 'row',
@@ -175,4 +184,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DoctorsList;
+export default NurseList;

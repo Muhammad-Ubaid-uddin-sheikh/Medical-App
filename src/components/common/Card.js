@@ -11,7 +11,7 @@ console.log(categories)
     const fetchCategories = async () => {
       try {
         const response = await getCategories();
-        setCategories(response.data.data);
+        setCategories(response.data);
         console.log(response.data)
       } catch (error) {
         console.error('Error fetching categories:', error);

@@ -7,37 +7,12 @@ import { format } from 'date-fns';
 import Button from '../components/common/Button'
 const ParticularDoctorScreen = ({ route, navigation }) => {
   const { item } = route.params
-  const [selectedTime, setSelectedTime] = useState([]);
-  const timeslots = [
-    { _id: '1', time: '09:00 AM', isBooked: true },
-    { _id: '2', time: '10:00 AM', isBooked: false },
-    { _id: '3', time: '11:00 AM', isBooked: false },
-    { _id: '4', time: '11:00 AM', isBooked: false },
-    { _id: '5', time: '11:00 AM', isBooked: false },
-    { _id: '6', time: '11:00 AM', isBooked: true },
-    { _id: '7', time: '11:00 AM', isBooked: false },
-    // Add more timeslots as needed
-  ];
-  const handleTimeSlotPress = (timeSlot) => {
-    const index = selectedTime.indexOf(timeSlot);
-    const isBooked = timeslots.find(slot => slot._id === timeSlot)?.isBooked;
 
-    if (isBooked) {
-      Alert.alert('Alert', 'This time slot is already booked.');
-      return;
-    }
-
-    if (index === -1) {
-      setSelectedTime([...selectedTime, timeSlot]);
-    } else {
-      const updatedTimeSlots = [...selectedTime];
-      updatedTimeSlots.splice(index, 1);
-      setSelectedTime(updatedTimeSlots);
-    }
-
-  };
+  console.log("CONFIRM booking", item)
+  
   console.log('itemsparam', item)
   const [selectedDate, setSelectedDate] = useState('Select a Time Slot');
+  
   console.log('seleteddate', selectedDate)
   const handleDayPress = (day) => {
     const formattedDate = format(new Date(day.dateString), 'd MMM yyyy');
@@ -54,7 +29,7 @@ const ParticularDoctorScreen = ({ route, navigation }) => {
         </View>
         <View style={styles.childTwo}>
           <View style={styles.childTwoOne}>
-            <Text style={styles.headingText}>Name {item.name}</Text>
+            <Text style={styles.headingText}> {item?.email.split('@')?.[0] || item?.username}</Text>
 
           </View>
           {/* <View style={styles.childTwoTwo}>
@@ -115,22 +90,11 @@ const ParticularDoctorScreen = ({ route, navigation }) => {
       <View style={{ backgroundColor: 'white', flex: 1, paddingTop: 10, justifyContent: 'space-around' }}>
 
 
-        <View style={{ backgroundColor: 'white', marginHorizontal: 10, marginTop: 10, paddingLeft: 10, paddingRight: 5, flexDirection: 'row', justifyContent: 'flex-start', width: 'auto', flexWrap: 'wrap', gap: 5, }}>
-          {timeslots.map((slot, index) => (
-            <TouchableOpacity
-              style={[styles.timeSlotsText, { backgroundColor: selectedTime.includes(slot._id) ? '#116754' : (slot.isBooked ? '#116754' : 'transparent'), color: slot.isBooked || selectedTime.includes(slot._id) ? 'white' : 'black' }]}
-              key={slot._id}
-              onPress={() => handleTimeSlotPress(slot._id)}
-              disabled={slot.isBooked}
-            >
-              <Text style={[{ fontSize: 13, fontFamily: Fonts.REGULAR, color: slot.isBooked || selectedTime.includes(slot._id) ? 'white' : 'black' }]}>{slot.time}</Text>
-            </TouchableOpacity>
-          ))}
-
-        </View>
-
         <View style={{ paddingHorizontal: 15, }}>
-          <Button text="Next" Link={() => navigation.navigate('ConfromBooking')} />
+          <Button text="Next" Link={() => navigation.navigate('ConfromBooking',{item:{
+            ...item,
+            availabeleDate:selectedDate
+          }})} />
         </View>
       </View>
 
