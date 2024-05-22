@@ -7,7 +7,8 @@ const endpoint = {
   UPDATE_APPOINTMENT:'doctor/updateAppointment',
   NURSE:'doctor/getAllNurses',
   ASSIGN_NURSE:'doctor/assignNurse',
-  BOOKING:'patient/bookAppointment'
+  BOOKING:'patient/bookAppointment',
+  MY_APPOINTMENT:'nurse/getMyAppointments'
 };
 
 export default endpoint;

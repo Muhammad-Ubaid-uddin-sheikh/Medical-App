@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import Header from '../components/layout/Header';
 import { DoctorDetails } from '../../Data';
 import Footer from '../components/layout/Footer';
@@ -16,20 +16,44 @@ import SearchBar from '../components/common/SearchBar';
 import { Fonts } from '../components/style';
 import BookIcon from 'react-native-vector-icons/FontAwesome6'
 import { getAppointment } from '../api/doctor';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getMyAppointment } from '../api/nurse';
 const PatientList = ({ navigation }) => {
   const [Patient, setPatient] = useState([]);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await getAppointment();
-        setPatient(response.data);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
-    };
-    fetchCategories();
+  
+  const fetchDoctorApointment = async () => {
+    try {
+      const response = await getAppointment();
+      setPatient(response.data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  const fetchNurseApointment = async () => {
+    try {
+      const response = await getMyAppointment();
+      setPatient(response.data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  useEffect(async () => {
+   let role =  await AsyncStorage.getItem('role')
+    if(role === 'nurse'){
+      fetchNurseApointment()
+
+    }else{
+
+      fetchDoctorApointment()
+
+    }
+
   }, []);
+
+useLayoutEffect
 
   return (
     <SafeAreaView style={{ backgroundColor: '#e3eeeb', flex: 1 }}>
